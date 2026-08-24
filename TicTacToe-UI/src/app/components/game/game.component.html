@@ -80,7 +80,17 @@
               [class.o-cell]="state.board[row][col] === 'O'"
               [class.clickable]="isGameActive && !isCellOccupied(row, col) && !loading() && !movePending()"
               (click)="makeMove(row, col)">
-              <span class="cell-content">{{ getCellDisplay(row, col) }}</span>
+              <span class="cell-content">
+                @if (state.board[row][col] === 'X') {
+                  <svg class="mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                    <path d="M22 22 L78 78 M78 22 L22 78" />
+                  </svg>
+                } @else if (state.board[row][col] === 'O') {
+                  <svg class="mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+                    <circle cx="50" cy="50" r="28" />
+                  </svg>
+                }
+              </span>
             </div>
           }
         }

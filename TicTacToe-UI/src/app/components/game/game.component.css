@@ -210,9 +210,21 @@
 }
 
 .cell-content {
-  font-size: clamp(2.25rem, 11vw, 3rem);
-  font-weight: 700;
-  line-height: 1;
+  /* Marks are inline SVGs sharing one identical box, so X and O render at
+     exactly the same size on every platform regardless of font fallbacks. */
+  --mark-size: calc(clamp(2.25rem, 11vw, 3rem) * 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mark {
+  width: var(--mark-size);
+  height: var(--mark-size);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 11;
+  stroke-linecap: round;
 }
 
 .x-cell .cell-content {
