@@ -1,0 +1,153 @@
+<div class="game-container">
+  <h1 class="title">Tic Tac Toe</h1>
+
+  <!-- Error message -->
+  @if (errorMessage()) {
+    <div class="error-banner">
+      {{ errorMessage() }}
+      <button class="dismiss-btn" (click)="errorMessage.set('')">×</button>
+    </div>
+  }
+
+  <!-- Loading overlay -->
+  @if (loading()) {
+    <div class="loading-overlay">
+      <div class="spinner"></div>
+    </div>
+  }
+
+  <!-- Mode selector (shown before game starts) -->
+  @if (!gameState()) {
+    <div class="mode-selector">
+      @if (!showDifficulty()) {
+        <p class="mode-label">Select Game Mode</p>
+        <div class="mode-buttons">
+          <button class="mode-btn two-player" (click)="chooseMode(0)" [disabled]="loading()">
+            <span class="mode-icon">👥</span>
+            <span>Two Player</span>
+          </button>
+          <button class="mode-btn computer" (click)="chooseMode(1)" [disabled]="loading()">
+            <span class="mode-icon">🤖</span>
+            <span>vs Computer</span>
+          </button>
+        </div>
+      } @else {
+        <p class="mode-label">Select Difficulty</p>
+        <div class="difficulty-buttons">
+          <button class="mode-btn diff-easy" (click)="startGame(1, 0)" [disabled]="loading()">
+            <span class="mode-icon">🌱</span>
+            <span>Easy</span>
+          </button>
+          <button class="mode-btn diff-medium" (click)="startGame(1, 1)" [disabled]="loading()">
+            <span class="mode-icon">⚔️</span>
+            <span>Medium</span>
+          </button>
+          <button class="mode-btn diff-hard" (click)="startGame(1, 2)" [disabled]="loading()">
+            <span class="mode-icon">🔥</span>
+            <span>Hard</span>
+          </button>
+        </div>
+        <button class="control-btn back-btn" (click)="showDifficulty.set(false)" [disabled]="loading()">
+          ← Back
+        </button>
+      }
+    </div>
+  }
+
+  <!-- Game board (shown when game is active) -->
+  @if (gameState(); as state) {
+    <div class="game-area">
+      <!-- Status bar -->
+      <div class="status-bar" [class.won]="state.status === 'Won'" [class.draw]="state.status === 'Draw'">
+        <span class="status-text">{{ getStatusMessage() }}</span>
+        @if (isGameActive) {
+          <span class="move-timer" [class.warning]="timeLeft() <= 3">
+            ⏱ {{ timeLeft() }}s
+          </span>
+        }
+        <span class="mode-tag">{{ getModeTag() }}</span>
+      </div>
+
+      <!-- Board -->
+      <div class="board" [class.game-over]="isGameOver">
+        @for (row of [0, 1, 2]; track row) {
+          @for (col of [0, 1, 2]; track col) {
+            <div
+              class="cell"
+              [class.occupied]="isCellOccupied(row, col)"
+              [class.winning]="isWinningCell(row, col)"
+              [class.x-cell]="state.board[row][col] === 'X'"
+              [class.o-cell]="state.board[row][col] === 'O'"
+              [class.clickable]="isGameActive && !isCellOccupied(row, col) && !loading()"
+              (click)="makeMove(row, col)">
+              <span class="cell-content">{{ getCellDisplay(row, col) }}</span>
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <button
+          class="control-btn undo-btn"
+          (click)="undoMove()"
+          [disabled]="!state.canUndo || loading()">
+          ↩ Undo
+        </button>
+        <button
+          class="control-btn reset-btn"
+          (click)="resetGame()"
+          [disabled]="loading()">
+          ⟳ Reset Game
+        </button>
+        <button
+          class="control-btn new-game-btn"
+          (click)="gameState.set(null)"
+          [disabled]="loading()">
+          ＋ New Game
+        </button>
+      </div>
+
+      <!-- Move History -->
+      @if (state.moveHistory.length > 0) {
+        <div class="move-history">
+          <h3 class="section-title">Move History</h3>
+          <div class="history-list">
+            @for (move of state.moveHistory; track move.moveNumber) {
+              <div class="history-item" [class.x-move]="move.player === 'X'" [class.o-move]="move.player === 'O'">
+                <span class="move-number">#{{ move.moveNumber }}</span>
+                <span class="move-player">{{ move.player === 'X' ? '✕' : '○' }}</span>
+                <span class="move-pos">({{ move.row }}, {{ move.column }})</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Scoreboard -->
+      <div class="scoreboard">
+        <h3 class="section-title">Scoreboard</h3>
+        <div class="score-grid">
+          <div class="score-card x-score">
+            <div class="score-label">✕ Player X</div>
+            <div class="score-value">{{ scoreboard().xWins }}</div>
+          </div>
+          <div class="score-card draw-score">
+            <div class="score-label">Draws</div>
+            <div class="score-value">{{ scoreboard().draws }}</div>
+          </div>
+          <div class="score-card o-score">
+            <div class="score-label">○ Player O</div>
+            <div class="score-value">{{ scoreboard().oWins }}</div>
+          </div>
+        </div>
+        <button
+          class="control-btn reset-score-btn"
+          (click)="resetScoreboard()"
+          [disabled]="loading()">
+          Reset Scoreboard
+        </button>
+      </div>
+    </div>
+  }
+</div>

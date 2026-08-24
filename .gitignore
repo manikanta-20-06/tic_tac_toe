@@ -1,0 +1,30 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.dll
+*.exe
+*.pdb
+*.nupkg
+*.snupkg
+.vs/
+*.DotSettings.user
+TestResults/
+
+## Node / Angular
+node_modules/
+dist/
+.angular/
+coverage/
+
+## IDE
+.idea/
+.vscode/settings.json
+*.swp
+*.swo
+
+## OS
+.DS_Store
+Thumbs.db
