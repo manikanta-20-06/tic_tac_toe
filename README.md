@@ -1,3 +1,4 @@
+
 # Tic Tac Toe — Full Stack Application
 
 A complete Tic Tac Toe game with a .NET Web API backend and Angular frontend, featuring Two Player mode, Computer mode with three difficulty levels (Easy / Medium / Hard), a per-move 10-second countdown timer, undo, scoreboard, and real-time game state management.
@@ -203,3 +204,5 @@ AI tools used: Codebuff/Freebuff coding agents (Claude-based models) inside an o
 - Game replay functionality
 - Sound effects and richer animations
 - Alpha-beta pruning benchmarking / larger board support
+# tic_tac_toe
+
