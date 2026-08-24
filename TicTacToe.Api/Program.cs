@@ -26,6 +26,13 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Startup diagnostics: fail loudly in logs if the Angular bundle is missing from the image.
+// If index.html is absent, every SPA route (including "/") returns a bare 404.
+var webRootPath = app.Environment.WebRootPath;
+var hasIndexHtml = webRootPath is not null && File.Exists(Path.Combine(webRootPath, "index.html"));
+app.Logger.LogInformation("SPA static files: web root '{WebRoot}', index.html {Status}",
+    webRootPath ?? "MISSING", hasIndexHtml ? "found" : "NOT FOUND");
+
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
