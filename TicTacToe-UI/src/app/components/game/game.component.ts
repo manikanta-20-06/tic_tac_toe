@@ -22,6 +22,7 @@ export class GameComponent implements OnInit, OnDestroy {
   gameState = signal<GameStateResponse | null>(null);
   scoreboard = signal<ScoreboardResponse>({ xWins: 0, oWins: 0, draws: 0 });
   loading = signal(false);
+  movePending = signal(false);
   errorMessage = signal('');
   selectedMode = signal<GameMode>(GameMode.TwoPlayer);
   selectedDifficulty = signal<Difficulty>(Difficulty.Medium);
@@ -97,17 +98,34 @@ export class GameComponent implements OnInit, OnDestroy {
     const state = this.gameState();
     if (!state || !this.isGameActive) return;
     if (state.board[row][col] !== '') return;
-    if (this.loading()) return;
+    if (this.loading() || this.movePending()) return;
+
+    // Optimistic update: paint the mark and flip the turn immediately so the
+    // board never waits on the network. The server response reconciles the
+    // authoritative state; a failure rolls back to the pre-move snapshot.
+    const player = state.currentPlayer === 'X' ? 0 : 1;
+    const mark = state.currentPlayer;
+    const board = state.board.map(r => [...r]);
+    board[row][col] = mark;
+    this.gameState.set({
+      ...state,
+      board,
+      currentPlayer: mark === 'X' ? 'O' : 'X',
+      moveHistory: [
+        ...state.moveHistory,
+        { player: mark, row, column: col, moveNumber: state.moveHistory.length + 1, timestamp: '' }
+      ],
+      canUndo: true
+    });
 
     this.stopMoveTimer();
-    this.loading.set(true);
+    this.movePending.set(true);
     this.errorMessage.set('');
-    const player = state.currentPlayer === 'X' ? 0 : 1;
 
     this.gameService.makeMove(state.id, player, row, col).subscribe({
       next: (game) => {
         this.gameState.set(game);
-        this.loading.set(false);
+        this.movePending.set(false);
         if (game.status !== 'InProgress') {
           this.loadScoreboard();
         } else {
@@ -115,8 +133,9 @@ export class GameComponent implements OnInit, OnDestroy {
         }
       },
       error: (err) => {
+        this.gameState.set(state);
+        this.movePending.set(false);
         this.errorMessage.set(err.error?.message || 'Failed to make move.');
-        this.loading.set(false);
         this.startMoveTimer();
       }
     });

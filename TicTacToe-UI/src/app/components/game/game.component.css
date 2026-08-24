@@ -1,5 +1,6 @@
 .game-container {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -10,9 +11,10 @@
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: clamp(1.8rem, 7vw, 2.5rem);
   font-weight: 700;
   margin-bottom: 1.5rem;
+  text-align: center;
   background: linear-gradient(90deg, #00d2ff, #3a7bd5);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -29,7 +31,9 @@
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  max-width: 100%;
   font-size: 0.9rem;
 }
 
@@ -80,6 +84,7 @@
 
 .mode-buttons {
   display: flex;
+  flex-wrap: wrap;
   gap: 1.5rem;
   justify-content: center;
 }
@@ -125,6 +130,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
   width: 100%;
   padding: 1rem 1.5rem;
   background: rgba(255,255,255,0.1);
@@ -133,7 +140,7 @@
 }
 
 .status-text {
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 4vw, 1.2rem);
   font-weight: 600;
 }
 
@@ -155,8 +162,8 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 6px;
-  width: 320px;
-  height: 320px;
+  width: min(320px, 100%);
+  aspect-ratio: 1 / 1;
   background: rgba(255,255,255,0.1);
   border-radius: 16px;
   padding: 6px;
@@ -203,7 +210,7 @@
 }
 
 .cell-content {
-  font-size: 3rem;
+  font-size: clamp(2.25rem, 11vw, 3rem);
   font-weight: 700;
   line-height: 1;
 }
@@ -346,7 +353,7 @@
 }
 
 .score-label {
-  font-size: 0.75rem;
+  font-size: clamp(0.65rem, 2.8vw, 0.75rem);
   color: rgba(255,255,255,0.6);
   margin-bottom: 0.25rem;
 }
@@ -367,17 +374,17 @@
 
 /* Responsive */
 @media (max-width: 480px) {
-  .title { font-size: 1.8rem; }
-
-  .board {
-    width: 280px;
-    height: 280px;
-  }
-
-  .cell-content { font-size: 2.5rem; }
+  .mode-btn { padding: 1.25rem 1.5rem; }
 
   .mode-buttons {
     flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .difficulty-buttons {
+    flex-wrap: wrap;
   }
 
   .controls {
@@ -389,6 +396,14 @@
     width: 100%;
     text-align: center;
   }
+}
+
+/* Extra-narrow phones: keep everything inside the viewport */
+@media (max-width: 360px) {
+  .status-bar { padding: 0.75rem 1rem; }
+
+  .move-history,
+  .scoreboard { padding: 0.85rem 0.9rem; }
 }
 
 /* Move timer */
