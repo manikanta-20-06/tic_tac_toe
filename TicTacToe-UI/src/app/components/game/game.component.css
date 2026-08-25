@@ -22,6 +22,16 @@
   letter-spacing: 2px;
 }
 
+/* Credit line shown under the title on the opening screen */
+.byline {
+  font-size: clamp(0.85rem, 3vw, 1rem);
+  font-weight: 400;
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+  letter-spacing: 0.5px;
+  margin: -0.9rem 0 1.75rem;
+}
+
 /* Error Banner */
 .error-banner {
   background: rgba(220, 53, 69, 0.9);

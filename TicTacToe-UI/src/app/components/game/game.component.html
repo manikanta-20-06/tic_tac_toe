@@ -1,5 +1,8 @@
 <div class="game-container">
   <h1 class="title">Tic Tac Toe</h1>
+  @if (!gameState()) {
+    <p class="byline">By Tejashwini J V from CGI</p>
+  }
 
   <!-- Error message -->
   @if (errorMessage()) {
