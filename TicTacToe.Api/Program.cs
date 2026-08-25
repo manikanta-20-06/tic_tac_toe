@@ -1,7 +1,24 @@
+using Microsoft.Extensions.Configuration.Json;
 using TicTacToe.Api.Interfaces;
 using TicTacToe.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// --- Render deployment fix --------------------------------------------------
+// Containers on Render enforce a low inotify instance limit (128). The host
+// adds appsettings.json / appsettings.{Environment}.json with reloadOnChange:
+// true, and each watched JSON source opens an inotify watcher, crashing
+// startup. Replace those sources IN PLACE (same order, no duplicates) with
+// unwatched equivalents. Nothing else about configuration changes.
+for (var i = builder.Configuration.Sources.Count - 1; i >= 0; i--) {
+    if (builder.Configuration.Sources[i] is JsonConfigurationSource json && json.ReloadOnChange) {
+        builder.Configuration.Sources[i] = new JsonConfigurationSource {
+            Path = json.Path,
+            Optional = json.Optional,
+            ReloadOnChange = false
+        };
+    }
+}
 
 // Add services to the container
 builder.Services.AddControllers();
